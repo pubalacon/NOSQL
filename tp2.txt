@@ -1,0 +1,535 @@
+> db.personne.insert({nom:"Martin", prenom:"Martin"});
+WriteResult({ "nInserted" : 1 })
+> db.personne.insert({nom:"Martin", prenom:"Michel", age:25});
+WriteResult({ "nInserted" : 1 })
+> db.personne.insert({nom:"Martin", prenom:"Lucie", adresse:"Technopole Izarbel"});
+WriteResult({ "nInserted" : 1 })
+
+// insertion multiple (tableau)
+> db.personne.insert([{nom:"Martin", prenom:"Mina", adresse:"Technopole Izarbel"}, {om:"Martin", prenom:"Laura"}]);
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 2,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+> db.personne.find();
+{ "_id" : ObjectId("5db6b5ec24daf6ec8b76a3d2"), "nom" : "Martin", "prenom" : "Martin" }
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Michel", "age" : 25 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d6"), "om" : "Martin", "prenom" : "Laura" }
+
+> db.personne.deleteOne({om:"Martin"});
+{ "acknowledged" : true, "deletedCount" : 1 }
+> db.personne.find();
+{ "_id" : ObjectId("5db6b5ec24daf6ec8b76a3d2"), "nom" : "Martin", "prenom" : "Martin" }
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Michel", "age" : 25 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel" }
+> db.personne.insert([{om:"Martin", prenom:"Laura"}]);
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 1,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+> db.personne.find();
+{ "_id" : ObjectId("5db6b5ec24daf6ec8b76a3d2"), "nom" : "Martin", "prenom" : "Martin" }
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Michel", "age" : 25 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d6"), "om" : "Martin", "prenom" : "Laura" }
+
+> db.personne.update({}, {$rename : {'om': 'nom'}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+> db.personne.find();
+{ "_id" : ObjectId("5db6b5ec24daf6ec8b76a3d2"), "nom" : "Martin", "prenom" : "Martin" }
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Michel", "age" : 25 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6bfbf24daf6ec8b76a3d7"), "om" : "Martin", "prenom" : "Laura" }
+> db.personne.update({}, {$rename : {"om": "nom"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 0 })
+> db.personne.updateMany({}, {$rename : {"om": "nom"}});
+{ "acknowledged" : true, "matchedCount" : 5, "modifiedCount" : 1 }
+> db.personne.find();
+{ "_id" : ObjectId("5db6b5ec24daf6ec8b76a3d2"), "nom" : "Martin", "prenom" : "Martin" }
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Michel", "age" : 25 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6bfbf24daf6ec8b76a3d7"), "prenom" : "Laura", "nom" : "Martin" }
+
+// ...
+ 
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Charles", "age" : 35 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel", "age" : 21 }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel", "age" : 21 }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "nom" : "Martin", "prenom" : "Laura", "age" : 21 }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "nom" : "Martin", "prenom" : "Joseph", "age" : 26, "ville" : "Bidart" }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "prenom" : "Olivier", "ville" : "Bidart", "age" : 54, "nom" : "Martin" }
+
+> db.personne.updateMany({$and: [{age:{$gt:20}}, {age:{$lt:54}}]}, {$set: {age:33}});
+{ "acknowledged" : true, "matchedCount" : 5, "modifiedCount" : 5 }
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Charles", "age" : 33 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel", "age" : 33 }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel", "age" : 33 }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "nom" : "Martin", "prenom" : "Laura", "age" : 33 }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "nom" : "Martin", "prenom" : "Joseph", "age" : 33, "ville" : "Bidart" }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "prenom" : "Olivier", "ville" : "Bidart", "age" : 33, "nom" : "Martin" }
+
+
+> db.personne.updateMany({}, {$set: {adresse: "Technopole Izarbel"}});
+{ "acknowledged" : true, "matchedCount" : 6, "modifiedCount" : 4 }
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "nom" : "Martin", "prenom" : "Charles", "age" : 33, "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "nom" : "Martin", "prenom" : "Lucie", "adresse" : "Technopole Izarbel", "age" : 33 }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "nom" : "Martin", "prenom" : "Mina", "adresse" : "Technopole Izarbel", "age" : 33 }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "nom" : "Martin", "prenom" : "Laura", "age" : 33, "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "nom" : "Martin", "prenom" : "Joseph", "age" : 33, "ville" : "Bidart", "adresse" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "prenom" : "Olivier", "ville" : "Bidart", "age" : 33, "nom" : "Martin", "adresse" : "Technopole Izarbel" }
+
+> db.personne.updateMany({}, {$rename:{"nom":"name", "prenom":"firstname","ville":"city", "adresse":"address"}});
+{ "acknowledged" : true, "matchedCount" : 6, "modifiedCount" : 6 }
+>
+>
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "age" : 33, "firstname" : "Charles", "name" : "Martin", "address" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "age" : 33, "firstname" : "Lucie", "name" : "Martin", "address" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "age" : 33, "firstname" : "Mina", "name" : "Martin", "address" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "age" : 33, "firstname" : "Laura", "name" : "Martin", "address" : "Technopole Izarbel" }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "age" : 33, "firstname" : "Joseph", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart" }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "age" : 33, "firstname" : "Olivier", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart" }
+
+// mettre a jour avec condition $and, sur tous les enreg validant la contrainte(multi), et ajout si la condition n'est pas trouvée (upsert) - upsert non effectué
+>db.personne.update({$and:[{age: {$gt:1}}, {age: {$lt: 90}}]}, {$set:{zipcode:64210}}, {multi:1,upsert:1});
+WriteResult({ "nMatched" : 6, "nUpserted" : 0, "nModified" : 4 })
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "age" : 33, "firstname" : "Charles", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210 }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "age" : 33, "firstname" : "Lucie", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210 }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "age" : 33, "firstname" : "Mina", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210 }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "age" : 33, "firstname" : "Laura", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210 }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "age" : 33, "firstname" : "Joseph", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210 }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "age" : 33, "firstname" : "Olivier", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210 }
+
+// mettre a jour avec condition $and, sur tous les enreg validant la contrainte(multi), et ajout si la condition n'est pas trouvée (upsert) - upsert effectué
+> db.personne.update({$and:[{age: {$gt:100}}, {age: {$lt: 190}}]}, {$set:{zipcode:64000}}, {multi:1,upsert:1});
+WriteResult({
+        "nMatched" : 0,
+        "nUpserted" : 1,
+        "nModified" : 0,
+        "_id" : ObjectId("5db6cf9fc912cd18e9d3f2ed")
+})
+> db.personne.find().pretty();
+{
+        "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"),
+        "age" : 33,
+        "firstname" : "Charles",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"),
+        "age" : 33,
+        "firstname" : "Lucie",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"),
+        "age" : 33,
+        "firstname" : "Mina",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"),
+        "age" : 33,
+        "firstname" : "Laura",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"),
+        "age" : 33,
+        "firstname" : "Joseph",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "city" : "Bidart",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c53ac912cd18e9d3f233"),
+        "age" : 33,
+        "firstname" : "Olivier",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "city" : "Bidart",
+        "zipcode" : 64210
+}
+{ "_id" : ObjectId("5db6cf9fc912cd18e9d3f2ed"), "zipcode" : 64000 }
+
+
+// afficher plus proprement
+> db.personne.find().pretty();
+{
+        "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"),
+        "age" : 33,
+        "firstname" : "Charles",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"),
+        "age" : 33,
+        "firstname" : "Lucie",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"),
+        "age" : 33,
+        "firstname" : "Mina",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"),
+        "age" : 33,
+        "firstname" : "Laura",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"),
+        "age" : 33,
+        "firstname" : "Joseph",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "city" : "Bidart",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c53ac912cd18e9d3f233"),
+        "age" : 33,
+        "firstname" : "Olivier",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "city" : "Bidart",
+        "zipcode" : 64210
+}
+
+// sauter les 2 premiers retours
+> db.personne.find().skip(2).pretty();
+{
+        "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"),
+        "age" : 33,
+        "firstname" : "Mina",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"),
+        "age" : 33,
+        "firstname" : "Laura",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"),
+        "age" : 33,
+        "firstname" : "Joseph",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "city" : "Bidart",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6c53ac912cd18e9d3f233"),
+        "age" : 33,
+        "firstname" : "Olivier",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "city" : "Bidart",
+        "zipcode" : 64210
+}
+
+// limiter a 2 retours
+> db.personne.find().limit(2).pretty();
+{
+        "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"),
+        "age" : 33,
+        "firstname" : "Charles",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+{
+        "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"),
+        "age" : 33,
+        "firstname" : "Lucie",
+        "name" : "Martin",
+        "address" : "Technopole Izarbel",
+        "zipcode" : 64210
+}
+
+// forEach sans condition
+> db.personne.find().forEach( function(data) { print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Charles Martin (33 ans)
+Lucie Martin (33 ans)
+Mina Martin (33 ans)
+Laura Martin (33 ans)
+Joseph Martin (33 ans)
+Olivier Martin (33 ans)
+undefined undefined (undefined ans)
+
+// forEach sur liste filtrée = initiale du prenom min ou majuscule
+> db.personne.find( {firstname: { $regex: /^l/, $options: "i" }} ).forEach( function(data) { print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Lucie Martin (33 ans)
+Laura Martin (33 ans)
+
+// forEach sur liste filtrée = age
+> db.personne.find( {age:{$gt:0}}).forEach( function(data) { print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Charles Martin (33 ans)
+Lucie Martin (33 ans)
+Mina Martin (33 ans)
+Laura Martin (33 ans)
+Joseph Martin (33 ans)
+Olivier Martin (33 ans)
+
+> db.personne.find( {} ).forEach( function(data) { if (data.age) print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Charles Martin (33 ans)
+Lucie Martin (33 ans)
+Mina Martin (33 ans)
+Laura Martin (33 ans)
+Joseph Martin (33 ans)
+Olivier Martin (33 ans)
+
+// forEach sur listre filtrée = prenom+nom
+> db.personne.find( {$and: [{firstname:{$gt:""}}, {name: {$gt:""}}]} ).forEach( function(data) { print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Charles Martin (33 ans)
+Lucie Martin (33 ans)
+Mina Martin (33 ans)
+Laura Martin (33 ans)
+Joseph Martin (33 ans)
+Olivier Martin (33 ans)
+
+// forEach sur listre filtrée = regex
+> db.personne.find( {name: /^M/} ).forEach( function(data) { print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Charles Martin (33 ans)
+Lucie Martin (33 ans)
+Mina Martin (33 ans)
+Laura Martin (33 ans)
+Joseph Martin (33 ans)
+Olivier Martin (33 ans)
+>
+>
+> db.personne.find( {firstname: /^L/} ).forEach( function(data) { print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Lucie Martin (33 ans)
+Laura Martin (33 ans)
+
+> db.personne.find( {firstname: /^[a-zA-Z]{1,5}$/} ).forEach( function(data) { print (data.firstname+" "+data.name+" ("+data.age+" ans)"); });
+Lucie Martin (33 ans)
+Mina Martin (33 ans)
+Laura Martin (33 ans)
+
+// insert tableau dans element
+>  db.personne.updateMany({}, { $set:{ sports:["natation", "judo"] }}, {upsert:true});
+{ "acknowledged" : true, "matchedCount" : 7, "modifiedCount" : 7 }
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "age" : 33, "firstname" : "Charles", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "age" : 33, "firstname" : "Lucie", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "age" : 33, "firstname" : "Mina", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "age" : 33, "firstname" : "Laura", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "age" : 33, "firstname" : "Joseph", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "age" : 33, "firstname" : "Olivier", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6cf9fc912cd18e9d3f2ed"), "zipcode" : 64000, "sports" : [ "natation", "judo" ] }
+
+// 
+> db.personne.update( {firstname:{$regex:/^L/, $options:"i"}}, {$push: {sports: {$each:["gymnastique", "equitation"]}}}, {multi:1});
+WriteResult({ "nMatched" : 2, "nUpserted" : 0, "nModified" : 2 })
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "age" : 33, "firstname" : "Charles", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "age" : 33, "firstname" : "Lucie", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo", "gymnastique", "equitation", "gymnastique", "equitation" ] }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "age" : 33, "firstname" : "Mina", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "age" : 33, "firstname" : "Laura", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo", "gymnastique", "equitation" ] }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "age" : 33, "firstname" : "Joseph", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "age" : 33, "firstname" : "Olivier", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6cf9fc912cd18e9d3f2ed"), "zipcode" : 64000, "sports" : [ "natation", "judo" ] }
+
+// creation id 6
+> db.personne.insert( {_id:6, nom:"wick", sports:["foot", "hand", "tennis"]});
+WriteResult({ "nInserted" : 1 })
+>
+>
+> db.personne.find({_id:6}).pretty();
+{
+        "_id" : 6,
+        "nom" : "wick",
+        "sports" : [
+                "foot",
+                "hand",
+                "tennis"
+        ]
+}
+// ajout de 3 sports dans le tableau et conservation des 5 derniers (foot disparait)
+> db.personne.update( {_id:6}, {$push: { sports: { $each: ["hockey", "ski", "volley"], $slice:-5} } } );
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.personne.find();
+{ "_id" : ObjectId("5db6b64524daf6ec8b76a3d3"), "age" : 33, "firstname" : "Charles", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6b89c24daf6ec8b76a3d4"), "age" : 33, "firstname" : "Lucie", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo", "gymnastique", "equitation", "gymnastique", "equitation" ] }
+{ "_id" : ObjectId("5db6b92c24daf6ec8b76a3d5"), "age" : 33, "firstname" : "Mina", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d8"), "age" : 33, "firstname" : "Laura", "name" : "Martin", "address" : "Technopole Izarbel", "zipcode" : 64210, "sports" : [ "natation", "judo", "gymnastique", "equitation" ] }
+{ "_id" : ObjectId("5db6c34f24daf6ec8b76a3d9"), "age" : 33, "firstname" : "Joseph", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6c53ac912cd18e9d3f233"), "age" : 33, "firstname" : "Olivier", "name" : "Martin", "address" : "Technopole Izarbel", "city" : "Bidart", "zipcode" : 64210, "sports" : [ "natation", "judo" ] }
+{ "_id" : ObjectId("5db6cf9fc912cd18e9d3f2ed"), "zipcode" : 64000, "sports" : [ "natation", "judo" ] }
+{ "_id" : 6, "nom" : "wick", "sports" : [ "hand", "tennis", "hockey", "ski", "volley" ] }
+
+> db.personne.remove({});
+WriteResult({ "nRemoved" : 8 })
+> db.personne.insert( {_id:6, nom:"wick", notes: [ {programmation: 17, coefficient:4},{OS:10, coefficient:2} ]});
+WriteResult({ "nInserted" : 1 })
+> db.personne.find();
+{ "_id" : 6, "nom" : "wick", "notes" : [ { "programmation" : 17, "coefficient" : 4 }, { "OS" : 10, "coefficient" : 2 } ] }
+> db.personne.find().pretty();
+{
+        "_id" : 6,
+        "nom" : "wick",
+        "notes" : [
+                {
+                        "programmation" : 17,
+                        "coefficient" : 4
+                },
+                {
+                        "OS" : 10,
+                        "coefficient" : 2
+                }
+        ]
+}
+
+> db.personne.update( {_id:6}, { $push: { notes: { "compilation": 12, "coefficient": 1} } });
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.personne.find().pretty();
+{
+        "_id" : 6,
+        "nom" : "wick",
+        "notes" : [
+                {
+                        "programmation" : 17,
+                        "coefficient" : 4
+                },
+                {
+                        "OS" : 10,
+                        "coefficient" : 2
+                },
+                {
+                        "compilation" : 12,
+                        "coefficient" : 1
+                }
+        ]
+}
+{
+        "_id" : 7,
+        "nom" : "doe",
+        "notes" : [
+                {
+                        "programmation" : 14,
+                        "coefficient" : 4
+                },
+                {
+                        "OS" : 13,
+                        "coefficient" : 2
+                }
+        ]
+}
+
+> db.personne.update({_id:6}, {$push: { notes: { $each: [ { "debug": 13, coefficient: 1}, { "analyse":17, coefficient:5}] }}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.personne.find({_id:6}).pretty();
+{
+        "_id" : 6,
+        "nom" : "wick",
+        "notes" : [
+                {
+                        "programmation" : 17,
+                        "coefficient" : 4
+                },
+                {
+                        "OS" : 10,
+                        "coefficient" : 2
+                },
+                {
+                        "compilation" : 12,
+                        "coefficient" : 1
+                },
+                {
+                        "debug" : 13,
+                        "coefficient" : 1
+                },
+                {
+                        "analyse" : 17,
+                        "coefficient" : 5
+                }
+        ]
+}
+
+> db.personne.update({_id:6}, {$pull: { notes: { "compilation":12, coefficient:1}}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.personne.find().pretty();
+{
+        "_id" : 6,
+        "nom" : "wick",
+        "notes" : [
+                {
+                        "programmation" : 17,
+                        "coefficient" : 4
+                },
+                {
+                        "OS" : 10,
+                        "coefficient" : 2
+                },
+                {
+                        "debug" : 13,
+                        "coefficient" : 1
+                },
+                {
+                        "analyse" : 17,
+                        "coefficient" : 5
+                }
+        ]
+}
+{
+        "_id" : 7,
+        "nom" : "doe",
+        "notes" : [
+                {
+                        "programmation" : 14,
+                        "coefficient" : 4
+                },
+                {
+                        "OS" : 13,
+                        "coefficient" : 2
+                }
+        ]
+}
+

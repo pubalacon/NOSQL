@@ -1,0 +1,313 @@
+1) lancer un serveur
+cmd>mongodb // lance le serveur
+powershell>mongod // lance le client mongo
+2) afficher la liste des db
+>show dbs
+3) se positioner sur la page blog
+use formation
+4) inserer un auteur avec les attributs suivants:
+name: "Doe"
+firstname: "John"
+age: 30
+topics: un tableau contenant 'dev' et 'admin
+company: une objet ayant pour attributs: name: 'SQLI' et title: 'developper'
+
+>db.createCollection("auteur"); // pas utile, l'insert suivant créé la collection
+> db.auteur.insert({ name: "Doe", firstname: "John", age: 30, topics: ["dev", "admin"], company:{ name:"SQLI",title: 'developper'}});
+
+> db.auteur.insert({ name: "Doe", firstname: "Jack", age: 22, topics: ["dev", "admin", "employee"], company:{ name:"Oracle",title: 'developper'}});
+WriteResult({ "nInserted" : 1 })
+> db.auteur.insert({ name: "Doe", firstname: "William", age: 25, topics: ["employee"], company:{ name:"Oracle",title: 'developper'}});
+WriteResult({ "nInserted" : 1 })
+
+5) lister les collections
+>show collections;
+
+6) afficher tous les auteurs, avec un peu de mise en forme.
+> db.auteur.find({}).forEach( function(data) { print (data.name+" "+data.firstname+" works at "+data.company.name+" and is "+data.age+" years old") });
+Doe John works at SQLI and is 30 years old
+Doe Jack works at Oracle and is 22 years old
+Doe William works at Oracle and is 25 years old
+
+7) ecrire les requetes pour trouver les auteurs  :
+8) ayant pour name: "Doe"
+> db.auteur.find({name: "Doe"}).pretty();
+{
+        "_id" : ObjectId("5db7095d24daf6ec8b76a3db"),
+        "name" : "Doe",
+        "firstname" : "John",
+        "age" : 30,
+        "topics" : [
+                "dev",
+                "admin"
+        ],
+        "company" : {
+                "name" : "SQLI",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709c724daf6ec8b76a3dc"),
+        "name" : "Doe",
+        "firstname" : "Jack",
+        "age" : 22,
+        "topics" : [
+                "dev",
+                "admin",
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709e124daf6ec8b76a3dd"),
+        "name" : "Doe",
+        "firstname" : "William",
+        "age" : 25,
+        "topics" : [
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+
+9) etants plus ages que 20 ans
+> db.auteur.find({age: {$gt:20}}).pretty();
+{
+        "_id" : ObjectId("5db7095d24daf6ec8b76a3db"),
+        "name" : "Doe",
+        "firstname" : "John",
+        "age" : 30,
+        "topics" : [
+                "dev",
+                "admin"
+        ],
+        "company" : {
+                "name" : "SQLI",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709c724daf6ec8b76a3dc"),
+        "name" : "Doe",
+        "firstname" : "Jack",
+        "age" : 22,
+        "topics" : [
+                "dev",
+                "admin",
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709e124daf6ec8b76a3dd"),
+        "name" : "Doe",
+        "firstname" : "William",
+        "age" : 25,
+        "topics" : [
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+
+9b) idem que 8+8 avec $and
+> db.auteur.find({$and: [ {name: "Doe"}, {age: {$gt:20}}]}).pretty();
+{
+        "_id" : ObjectId("5db7095d24daf6ec8b76a3db"),
+        "name" : "Doe",
+        "firstname" : "John",
+        "age" : 30,
+        "topics" : [
+                "dev",
+                "admin"
+        ],
+        "company" : {
+                "name" : "SQLI",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709c724daf6ec8b76a3dc"),
+        "name" : "Doe",
+        "firstname" : "Jack",
+        "age" : 22,
+        "topics" : [
+                "dev",
+                "admin",
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709e124daf6ec8b76a3dd"),
+        "name" : "Doe",
+        "firstname" : "William",
+        "age" : 25,
+        "topics" : [
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+
+10) travaillant pour une company s'apellant SQLI
+> db.auteur.find({"company.name": "SQLI"}).pretty();
+{
+        "_id" : ObjectId("5db7095d24daf6ec8b76a3db"),
+        "name" : "Doe",
+        "firstname" : "John",
+        "age" : 30,
+        "topics" : [
+                "dev",
+                "admin"
+        ],
+        "company" : {
+                "name" : "SQLI",
+                "title" : "developper"
+        }
+}
+
+11) dont le nom est "John" ou "Elvis"
+> db.auteur.find({ firstname: {$in: ["John", "Jack"]}}).pretty();
+{
+        "_id" : ObjectId("5db7095d24daf6ec8b76a3db"),
+        "name" : "Doe",
+        "firstname" : "John",
+        "age" : 30,
+        "topics" : [
+                "dev",
+                "admin"
+        ],
+        "company" : {
+                "name" : "SQLI",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709c724daf6ec8b76a3dc"),
+        "name" : "Doe",
+        "firstname" : "Jack",
+        "age" : 22,
+        "topics" : [
+                "dev",
+                "admin",
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+
+12) dont le tableau topics contient "dev"
+> db.auteur.find({ topics: {$in: ["dev"]}}).pretty();
+{
+        "_id" : ObjectId("5db7095d24daf6ec8b76a3db"),
+        "name" : "Doe",
+        "firstname" : "John",
+        "age" : 30,
+        "topics" : [
+                "dev",
+                "admin"
+        ],
+        "company" : {
+                "name" : "SQLI",
+                "title" : "developper"
+        }
+}
+{
+        "_id" : ObjectId("5db709c724daf6ec8b76a3dc"),
+        "name" : "Doe",
+        "firstname" : "Jack",
+        "age" : 22,
+        "topics" : [
+                "dev",
+                "admin",
+                "employee"
+        ],
+        "company" : {
+                "name" : "Oracle",
+                "title" : "developper"
+        }
+}
+CORRECTION
+>db.author.find(topics: {$elemMatch: {$eq:'dev'}}});
+
+13) supprimer un auteur
+> db.auteur.insert({ name: "Doe", firstname: "Rob", age: 20, topics: ["author"], company:{ name:"Oracle",title: 'developper'}});
+WriteResult({ "nInserted" : 1 })
+> db.auteur.remove({$and: [{name:"Doe"}, {firstname:"Rob"}]});
+WriteResult({ "nRemoved" : 1 })
+
+14) supprimer la collection auteur
+> db.auteur.drop();
+true
+> show collections"
+personne
+students
+
+15) mettre a jour un auteur
+> db.createCollection("auteur");
+{ "ok" : 1 }
+> db.auteur.insert({name:"Doe", Firstname:"John"});
+WriteResult({ "nInserted" : 1 })
+> db.auteur.update({name:"Doe"}, {$set: {"age":30, "topics":["dev","admin"], company:{name:"SQLI",title:"developper"}}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.auteur.find();
+{ "_id" : ObjectId("5db7117224daf6ec8b76a3e0"), "name" : "Doe", "Firstname" : "John", "age" : 30, "company" : { "name" : "SQLI", "title" : "developper" }, "topics" : [ "dev", "admin" ] }
+
+> db.auteur.update({name:"Doe"}, {$set:{firstname:"Jack"}});
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+> db.auteur.find();
+{ "_id" : ObjectId("5db7129124daf6ec8b76a3e1"), "name" : "Doe", "Firstname" : "John", "firstname" : "Jack" }
+
+
+16) creer un document contenant un tableau de string;
+db.tableau.insert({id:1, tableau:["hey"]});
+
+17) y ajouter, en une commande "ski" et "hockey"
+db.tableau.update({id:1}, {tableau:{$push:{$each:["ski", "hockey"]}}); // possible aussi avec exists, elemmatch...
+
+18) couper le tableau au 3 eme element
+db.tableau.update(id:1}, {tableau:{$slice:3}});
+
+19) faire un find qui retourne tous les documents dont le dit tableau contient "avion" ou "ski"
+$or: [
+{tableau:{$elemMatch:{$eq: "avion"}}},
+{tableau:{$elemMatch:{$eq: "ski"}}}
+]
+
+20) ecrire la commande qui applique une fonction de votre choix a chaque document retourne par find()
+db.tableau.find({}).forEach(function(doc) {
+print(doc.name)
+}
+)
+
+21) quels arguments prend la fonction update ?
+1: json pour filtrer
+2: json d'update
+
+22) pour tous les documents ou le champ age vaut plus que 18 creer le champ "majeur" et attribuez lui la valeur True.
+db.tableau.updateMany({age:{$gt:18}}, {$set:{majeur:true}})
+
+23) pour tous les documents ou le champ "nom" existe affichez le.
+db.tableau.find({nom : {$exists: 1}});
+
+24) lister quelques operateurs pouvant etre utilises dans le second argument de la methode update.
+
+

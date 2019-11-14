@@ -1,0 +1,219 @@
+// CREATION USERS
+
+> db.users.insert({    "_id":ObjectId("52ffc33cd85242f436000001"),    "contact": "987654321",    "dob": "01-01-1991",    "name": "Tom Benzamin",    "address": [       {          "building": "22 A, Indiana Apt",          "pincode": 123456,          "city": "Los Angeles",          "state": "California"       },       {          "building": "170 A, Acropolis Apt",          "pincode": 456789,          "city": "Chicago",          "state": "Illinois"       }    ] });
+WriteResult({ "nInserted" : 1 })
+
+> db.users.find().pretty();
+{
+        "_id" : ObjectId("52ffc33cd85242f436000001"),
+        "contact" : "987654321",
+        "dob" : "01-01-1991",
+        "name" : "Tom Benzamin",
+        "address" : [
+                {
+                        "building" : "22 A, Indiana Apt",
+                        "pincode" : 123456,
+                        "city" : "Los Angeles",
+                        "state" : "California"
+                },
+                {
+                        "building" : "170 A, Acropolis Apt",
+                        "pincode" : 456789,
+                        "city" : "Chicago",
+                        "state" : "Illinois"
+                }
+        ]
+}
+
+// CREATION ADDRESSES (report adresses de users)
+
+> db.addresses.insert([
+...                 {
+...                         "building" : "22 A, Indiana Apt",
+...                         "pincode" : 123456,
+...                         "city" : "Los Angeles",
+...                         "state" : "California"
+...                 },
+...                 {
+...                         "building" : "170 A, Acropolis Apt",
+...                         "pincode" : 456789,
+...                         "city" : "Chicago",
+...                         "state" : "Illinois"
+...                 }
+...         ]);
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 2,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+
+// INSERT DU user_id dans chaque adresse
+
+> db.addresses.updateMany({} , {$set: {user_id:ObjectId("52ffc33cd85242f436000001")}});
+{ "acknowledged" : true, "matchedCount" : 2, "modifiedCount" : 2 }
+> db.addresses.find().pretty();
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8c"),
+        "building" : "22 A, Indiana Apt",
+        "pincode" : 123456,
+        "city" : "Los Angeles",
+        "state" : "California",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8d"),
+        "building" : "170 A, Acropolis Apt",
+        "pincode" : 456789,
+        "city" : "Chicago",
+        "state" : "Illinois",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+
+// INSERT DES address_ids dans users
+
+db.users.update({"_id" : ObjectId("52ffc33cd85242f436000001")}, {$set:{"address_ids" : [ObjectId("5db7fe3248e96cdedf6aca8c"),ObjectId("5db7fe3248e96cdedf6aca8d")]}});
+
+// DELETE DES address dans users
+
+> db.users.update({"_id" : ObjectId("52ffc33cd85242f436000001")}, {$unset:{"address":1}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+// RESULTAT : relation entre les 2 collections
+
+> db.users.find().pretty();
+{
+        "_id" : ObjectId("52ffc33cd85242f436000001"),
+        "contact" : "987654321",
+        "dob" : "01-01-1991",
+        "name" : "Tom Benzamin",
+        "address_ids" : [
+                ObjectId("5db7fe3248e96cdedf6aca8c"),
+                ObjectId("5db7fe3248e96cdedf6aca8d")
+        ]
+}
+
+> db.addresses.find().pretty();
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8c"),
+        "building" : "22 A, Indiana Apt",
+        "pincode" : 123456,
+        "city" : "Los Angeles",
+        "state" : "California",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8d"),
+        "building" : "170 A, Acropolis Apt",
+        "pincode" : 456789,
+        "city" : "Chicago",
+        "state" : "Illinois",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+
+
+// UTILISATION
+
+var result = db.users.findOne({"name":"Tom Benzamin"},{"address_ids":1}); db.addresses.find({"_id":{"$in":result["address_ids"]}});
+{ "_id" : ObjectId("5db7fe3248e96cdedf6aca8c"), "building" : "22 A, Indiana Apt", "pincode" : 123456, "city" : "Los Angeles", "state" : "California", "user_id" : ObjectId("52ffc33cd85242f436000001") }
+{ "_id" : ObjectId("5db7fe3248e96cdedf6aca8d"), "building" : "170 A, Acropolis Apt", "pincode" : 456789, "city" : "Chicago", "state" : "Illinois", "user_id" : ObjectId("52ffc33cd85242f436000001") }
+
+// ASTUCE remove des objets not in : $nin
+> db.addresses.remove({_id: { $nin:[ObjectId("5db7fe3248e96cdedf6aca8c"),ObjectId("5db7fe3248e96cdedf6aca8d")]}});
+WriteResult({ "nRemoved" : 2 })
+> db.addresses.find().pretty();
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8c"),
+        "building" : "22 A, Indiana Apt",
+        "pincode" : 123456,
+        "city" : "Los Angeles",
+        "state" : "California",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8d"),
+        "building" : "170 A, Acropolis Apt",
+        "pincode" : 456789,
+        "city" : "Chicago",
+        "state" : "Illinois",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+
+// RACCOURCIS
+
+> db.users.insert({    "_id":ObjectId("52ffc33cd85242f436000002"),    "contact": "987654322",    "dob": "01-01-1991",    "name": "Jack Benzamin",    "address": [       {          "building": "22 A, Indiana Apt",          "pincode": 123456,          "city": "Los Angeles",          "state": "California"       },       {          "building": "170 A, Acropolis Apt",          "pincode": 456789,          "city": "Chicago",          "state": "Illinois"       }    ] });
+WriteResult({ "nInserted" : 1 })
+>
+>
+> db.users.find().pretty();
+{
+        "_id" : ObjectId("52ffc33cd85242f436000001"),
+        "contact" : "987654321",
+        "dob" : "01-01-1991",
+        "name" : "Tom Benzamin",
+        "address_ids" : [
+                ObjectId("5db7fe3248e96cdedf6aca8c"),
+                ObjectId("5db7fe3248e96cdedf6aca8d")
+        ]
+}
+{
+        "_id" : ObjectId("52ffc33cd85242f436000002"),
+        "contact" : "987654322",
+        "dob" : "01-01-1991",
+        "name" : "Jack Benzamin",
+        "address" : [
+                {
+                        "building" : "22 A, Indiana Apt",
+                        "pincode" : 123456,
+                        "city" : "Los Angeles",
+                        "state" : "California"
+                },
+                {
+                        "building" : "170 A, Acropolis Apt",
+                        "pincode" : 456789,
+                        "city" : "Chicago",
+                        "state" : "Illinois"
+                }
+        ]
+}
+
+>var result = db.users.find({"name" : "Jack Benzamin"}, {address:1})
+> db.addresses.insert(result[0].address[0]);
+WriteResult({ "nInserted" : 1 })
+> db.addresses.insert(result[0].address[1]);
+WriteResult({ "nInserted" : 1 })
+> db.addresses.find().pretty();
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8c"),
+        "building" : "22 A, Indiana Apt",
+        "pincode" : 123456,
+        "city" : "Los Angeles",
+        "state" : "California",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+{
+        "_id" : ObjectId("5db7fe3248e96cdedf6aca8d"),
+        "building" : "170 A, Acropolis Apt",
+        "pincode" : 456789,
+        "city" : "Chicago",
+        "state" : "Illinois",
+        "user_id" : ObjectId("52ffc33cd85242f436000001")
+}
+{
+        "_id" : ObjectId("5db8069d48e96cdedf6aca90"),
+        "building" : "22 A, Indiana Apt",
+        "pincode" : 123456,
+        "city" : "Los Angeles",
+        "state" : "California"
+}
+{
+        "_id" : ObjectId("5db806de48e96cdedf6aca91"),
+        "building" : "170 A, Acropolis Apt",
+        "pincode" : 456789,
+        "city" : "Chicago",
+        "state" : "Illinois"
+}

@@ -1,0 +1,87 @@
+> db.createCollection("students");
+{ "ok" : 1 }
+>
+> use students
+> db.students.insert( {_id:1, nom: "wick", notes:[10,15,12], age:19});
+WriteResult({ "nInserted" : 1 })
+> db.students.insert( {_id:2, nom: "bob", notes:[18,8,12], age:35});
+WriteResult({ "nInserted" : 1 })
+> db.students.insert( {_id:3, nom: "wolf", notes:[7,6,13], age:25});
+WriteResult({ "nInserted" : 1 })
+> db.students.insert( {_id:4, nom: "green", notes:[18,16,9], age:22});
+WriteResult({ "nInserted" : 1 })
+> db.students.find();
+{ "_id" : 1, "nom" : "wick", "notes" : [ 10, 15, 12 ], "age" : 19 }
+{ "_id" : 2, "nom" : "bob", "notes" : [ 18, 8, 12 ], "age" : 35 }
+{ "_id" : 3, "nom" : "wolf", "notes" : [ 7, 6, 13 ], "age" : 25 }
+{ "_id" : 4, "nom" : "green", "notes" : [ 18, 16, 9 ], "age" : 22 }
+
+> db.students.find({age:{$gt:20}});
+{ "_id" : 2, "nom" : "bob", "notes" : [ 18, 8, 12 ], "age" : 35 }
+{ "_id" : 3, "nom" : "wolf", "notes" : [ 7, 6, 13 ], "age" : 25 }
+{ "_id" : 4, "nom" : "green", "notes" : [ 18, 16, 9 ], "age" : 22 }
+
+> db.students.find({nom:{$in:["bob","wolf"]}});
+{ "_id" : 2, "nom" : "bob", "notes" : [ 18, 8, 12 ], "age" : 35 }
+{ "_id" : 3, "nom" : "wolf", "notes" : [ 7, 6, 13 ], "age" : 25 }
+
+> db.students.find({$and: [{age:{$gt:20}}, {age:{$lte:30}}]});
+{ "_id" : 3, "nom" : "wolf", "notes" : [ 7, 6, 13 ], "age" : 25 }
+{ "_id" : 4, "nom" : "green", "notes" : [ 18, 16, 9 ], "age" : 22 }
+
+> db.students.find({name: {$exists:true} });
+> db.students.find({nom: {$exists:true} });
+{ "_id" : 1, "nom" : "wick", "notes" : [ 10, 15, 12 ], "age" : 19 }
+{ "_id" : 2, "nom" : "bob", "notes" : [ 18, 8, 12 ], "age" : 35 }
+{ "_id" : 3, "nom" : "wolf", "notes" : [ 7, 6, 13 ], "age" : 25 }
+{ "_id" : 4, "nom" : "green", "notes" : [ 18, 16, 9 ], "age" : 22 }
+
+> db.students.createIndex({nom: 1}); // index créé sur nom en ascending
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1
+}
+
+> db.students.createIndex({prenom: -1}); // index créé sur prenom en descending
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 2,
+        "numIndexesAfter" : 3,
+        "ok" : 1
+}
+
+> db.students.getIndexes(); // list les index
+[
+        {
+                "v" : 2,
+                "key" : {
+                        "_id" : 1
+                },
+                "name" : "_id_",
+                "ns" : "students.students"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "nom" : 1
+                },
+                "name" : "nom_1",
+                "ns" : "students.students"
+        },
+        {
+                "v" : 2,
+                "key" : {
+                        "prenom" : -1
+                },
+                "name" : "prenom_-1",
+                "ns" : "students.students"
+        }
+]
+
+> db.students.aggregate( [ {$project: { _id: "$nom", moyenne: {$avg: "$notes"} } } ]);
+{ "_id" : "wick", "moyenne" : 12.333333333333334 }
+{ "_id" : "bob", "moyenne" : 12.666666666666666 }
+{ "_id" : "wolf", "moyenne" : 8.666666666666666 }
+{ "_id" : "green", "moyenne" : 14.333333333333334 }

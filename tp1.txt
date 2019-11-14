@@ -1,0 +1,10 @@
+Avantages SQL:
+Relationnel & transactionnel implémentés dans le moteur
+Language codifié et accès aux données similaire quelque soit l'implémentation
+Non redondance des données, MAJ data rapide, ajout nouveaux champs plus problématique
+
+
+Avantage NOSQL:
+Stockage Big Data: Distribution / partitionnement aisé
+Structuration des données plus floues, si l'une est manquante, OK quand meme
+Traitements de masse facilités
